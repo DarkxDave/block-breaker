@@ -43,7 +43,13 @@ public class BlockBreakerGame extends ApplicationAdapter {
         renderManager = new RenderManager();
         ball = new PingBall(config.getScreenWidth() / 2 - config.getBallSize() / 2, 41, config.getBallSize(), config.getBallInitialXSpeed(), config.getBallInitialYSpeed(), true);
         pad = new Paddle(config.getScreenWidth() / 2 - config.getPaddleWidth() / 2, 40, config.getPaddleWidth(), config.getPaddleHeight());
-        gameLevel = new GameLevel(1);
+     // Crear el nivel utilizando el Builder
+        gameLevel = new GameLevel.Builder()
+            .setLevelNumber(1)
+            .addRowOfBlocks(700, 70, 26, GameConfig.getInstance().getScreenWidth(), 10) // Fila 1
+            .addRowOfBlocks(660, 70, 26, GameConfig.getInstance().getScreenWidth(), 10) // Fila 2
+            .addRowOfBlocks(620, 70, 26, GameConfig.getInstance().getScreenWidth(), 10) // Fila 3
+            .build();
 
         // Verificar inicialización de gameLevel
         if (gameLevel == null || gameLevel.getBlocks() == null) {

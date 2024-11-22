@@ -1,38 +1,38 @@
 package level;
 
-import entity.Block;
-import config.GameConfig;
-
 import java.util.ArrayList;
+
+import config.GameConfig;
+import entity.Block;
 
 public class GameLevel {
     private int levelNumber;
     private ArrayList<Block> blocks;
 
-    public GameLevel(int levelNumber) {
-        this.levelNumber = levelNumber;
-        this.blocks = new ArrayList<>();
-        createBlocks();
+    private GameLevel(Builder builder) {
+        this.levelNumber = builder.levelNumber;
+        this.blocks = builder.blocks;
     }
 
-    // Método para crear los bloques en función del número de nivel
-    private void createBlocks() {
+    public void resetLevel() {
         blocks.clear();
-
-        int blockWidth = GameConfig.getInstance().getBlockWidth();
-        int blockHeight = GameConfig.getInstance().getBlockHeight();
-        int rows = GameConfig.getInstance().getBlockRows() + levelNumber - 1; // Aumenta las filas con el nivel
-        int y = GameConfig.getInstance().getScreenHeight();
-
-        for (int i = 0; i < rows; i++) {
-            y -= blockHeight + GameConfig.getInstance().getBlockSpacingY();
-            for (int x = GameConfig.getInstance().getBlockSpacingX(); x < GameConfig.getInstance().getScreenWidth(); x += blockWidth + GameConfig.getInstance().getBlockSpacingX()) {
-                blocks.add(new Block(x, y, blockWidth, blockHeight));
-            }
-        }
+        new Builder()
+            .setLevelNumber(levelNumber)
+            .addRowOfBlocks(700, 70, 26, GameConfig.getInstance().getScreenWidth(), 10)
+            .addRowOfBlocks(660, 70, 26, GameConfig.getInstance().getScreenWidth(), 10)
+            .addRowOfBlocks(620, 70, 26, GameConfig.getInstance().getScreenWidth(), 10)
+            .buildTo(this);
     }
 
-    // Método para verificar si todos los bloques han sido destruidos
+    public void advanceToNextLevel() {
+        levelNumber++;
+        resetLevel();
+    }
+
+    public ArrayList<Block> getBlocks() {
+        return blocks;
+    }
+
     public boolean isLevelCompleted() {
         for (Block block : blocks) {
             if (!block.isDestroyed()) {
@@ -42,24 +42,32 @@ public class GameLevel {
         return true;
     }
 
-    // Método para reiniciar los bloques
-    public void resetLevel() {
-        createBlocks();
-    }
+    public static class Builder {
+        private int levelNumber;
+        private ArrayList<Block> blocks = new ArrayList<>();
 
-    // Getter para los bloques
-    public ArrayList<Block> getBlocks() {
-        return blocks;
-    }
+        public Builder setLevelNumber(int levelNumber) {
+            this.levelNumber = levelNumber;
+            return this;
+        }
 
-    // Getter para el número de nivel
-    public int getLevelNumber() {
-        return levelNumber;
-    }
+        public Builder addRowOfBlocks(int startY, int blockWidth, int blockHeight, int screenWidth, int spacing) {
+            int y = startY;
+            for (int x = spacing; x < screenWidth; x += blockWidth + spacing) {
+                blocks.add(new Block(x, y, blockWidth, blockHeight));
+            }
+            return this;
+        }
 
-    // Avanza al siguiente nivel
-    public void advanceToNextLevel() {
-        levelNumber++;
-        createBlocks();
+        public GameLevel build() {
+            return new GameLevel(this);
+        }
+
+        // Método para reconstruir un GameLevel existente
+        public void buildTo(GameLevel existingLevel) {
+            existingLevel.levelNumber = this.levelNumber;
+            existingLevel.blocks.clear();
+            existingLevel.blocks.addAll(this.blocks);
+        }
     }
 }
