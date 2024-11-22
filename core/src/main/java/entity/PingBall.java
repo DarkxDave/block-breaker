@@ -29,10 +29,10 @@ public class PingBall extends GameObject implements Drawable {
         x += xSpeed;
         y += ySpeed;
 
-        if (x - width / 2 < 0 || x + width / 2 > GameConfig.getScreenWidth()) {
+        if (x - width / 2 < 0 || x + width / 2 > GameConfig.getInstance().getScreenWidth()) {
             xSpeed = -xSpeed;
         }
-        if (y + height / 2 > GameConfig.getScreenHeight()) {
+        if (y + height / 2 > GameConfig.getInstance().getScreenWidth()) {
             ySpeed = -ySpeed;
         }
     }
@@ -77,4 +77,19 @@ public class PingBall extends GameObject implements Drawable {
     public int getY() {
         return y;
     }
+    
+    public void incrementSpeed(float increment) {
+        if (xSpeed > 0) {
+            xSpeed += increment;
+        } else {
+            xSpeed -= increment;
+        }
+
+        if (ySpeed > 0) {
+            ySpeed += increment;
+        } else {
+            ySpeed -= increment;
+        }
+    }
+
 }

@@ -29,8 +29,8 @@ public class Paddle extends GameObject implements Drawable
 
     public void moveRight() {
         x += speed;
-        if (x + width > GameConfig.getScreenWidth()) {
-            x = GameConfig.getScreenWidth() - width; // Ajustar la posición para que no sobrepase el límite
+        if (x + width > GameConfig.getInstance().getScreenWidth()) {
+            x = GameConfig.getInstance().getScreenWidth() - width; // Ajustar la posición para que no sobrepase el límite
         }
     }
 

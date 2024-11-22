@@ -27,8 +27,8 @@ public class UIManager {
     // Método para dibujar el HUD en pantalla
     public void drawHUD() {
         batch.begin();
-        font.draw(batch, "Puntos: " + scoreManager.getPuntaje(), 20, GameConfig.getScreenHeight() - 20);
-        font.draw(batch, "Vidas: " + scoreManager.getVidas(), GameConfig.getScreenWidth() - 150, GameConfig.getScreenHeight() - 20);
+        font.draw(batch, "Puntos: " + scoreManager.getPuntaje(), 20, GameConfig.getInstance().getScreenHeight() - 20);
+        font.draw(batch, "Vidas: " + scoreManager.getVidas(), GameConfig.getInstance().getScreenWidth() - 150, GameConfig.getInstance().getScreenHeight() - 20);
         batch.end();
     }
 
@@ -40,11 +40,11 @@ public class UIManager {
             GlyphLayout layout1 = new GlyphLayout(font, instruccion1);
             GlyphLayout layout2 = new GlyphLayout(font, instruccion2);
 
-            float xPos1 = (GameConfig.getScreenWidth() - layout1.width) / 2;
-            float xPos2 = (GameConfig.getScreenWidth() - layout2.width) / 2;
+            float xPos1 = (GameConfig.getInstance().getScreenWidth() - layout1.width) / 2;
+            float xPos2 = (GameConfig.getInstance().getScreenWidth() - layout2.width) / 2;
 
-            font.draw(batch, instruccion1, xPos1, GameConfig.getScreenHeight() / 2 + 20);
-            font.draw(batch, instruccion2, xPos2, GameConfig.getScreenHeight() / 2 - 20);
+            font.draw(batch, instruccion1, xPos1, GameConfig.getInstance().getScreenWidth() / 2 + 20);
+            font.draw(batch, instruccion2, xPos2, GameConfig.getInstance().getScreenWidth() / 2 - 20);
             batch.end();
         }
     }

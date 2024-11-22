@@ -28,4 +28,8 @@ public class Block extends GameObject implements Drawable {
     public boolean isDestroyed() {
         return destroyed;
     }
+    
+    public void reset() {
+        this.destroyed = false;
+    }
 }

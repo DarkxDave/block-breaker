@@ -16,17 +16,17 @@ import manager.UIManager;
 import level.GameLevel;
 import entity.Drawable;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class BlockBreakerGame extends ApplicationAdapter {
-    private CollisionManager collisionManager;
-    private OrthographicCamera  camera;
+    private OrthographicCamera camera;
     private SpriteBatch batch;
     private RenderManager renderManager;
     private PingBall ball;
     private Paddle pad;
-    private ScoreManager scoreManager;
+    private CollisionManager collisionManager;
     private InputHandler inputHandler;
     private UIManager uiManager;
     private GameLevel gameLevel;
@@ -34,22 +34,25 @@ public class BlockBreakerGame extends ApplicationAdapter {
 
     @Override
     public void create() {
+        GameConfig config = GameConfig.getInstance();
+
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, GameConfig.getScreenWidth(), GameConfig.getScreenHeight());
+        camera.setToOrtho(false, config.getScreenWidth(), config.getScreenHeight());
         batch = new SpriteBatch();
+
         renderManager = new RenderManager();
-
-        ball = new PingBall(GameConfig.getScreenWidth() / 2 - GameConfig.getBallSize() / 2, 41, GameConfig.getBallSize(), GameConfig.getBallInitialXSpeed(), GameConfig.getBallInitialYSpeed(), true);
-        pad = new Paddle(GameConfig.getScreenWidth() / 2 - GameConfig.getPaddleWidth() / 2, 40, GameConfig.getPaddleWidth(), GameConfig.getPaddleHeight());
-
-        scoreManager = new ScoreManager();
+        ball = new PingBall(config.getScreenWidth() / 2 - config.getBallSize() / 2, 41, config.getBallSize(), config.getBallInitialXSpeed(), config.getBallInitialYSpeed(), true);
+        pad = new Paddle(config.getScreenWidth() / 2 - config.getPaddleWidth() / 2, 40, config.getPaddleWidth(), config.getPaddleHeight());
         gameLevel = new GameLevel(1);
 
-        // Inicialización de CollisionManager con los objetos necesarios
-        collisionManager = new CollisionManager(ball, pad, gameLevel.getBlocks(), scoreManager);
-        
+        // Verificar inicialización de gameLevel
+        if (gameLevel == null || gameLevel.getBlocks() == null) {
+            throw new NullPointerException("GameLevel or its blocks are not initialized!");
+        }
+
+        collisionManager = new CollisionManager(ball, pad, gameLevel.getBlocks());
         inputHandler = new InputHandler(pad, ball);
-        uiManager = new UIManager(batch, scoreManager, ball);
+        uiManager = new UIManager(batch, ScoreManager.getInstance(), ball);
 
         drawables = new ArrayList<>();
         drawables.add(pad);
@@ -57,42 +60,48 @@ public class BlockBreakerGame extends ApplicationAdapter {
         drawables.addAll(gameLevel.getBlocks());
     }
 
+
     @Override
     public void render() {
         inputHandler.handleInput();
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Actualizar la posición de la bola y manejar su movimiento si no está quieto
+        if (ball == null || pad == null) {
+            throw new NullPointerException("Ball or Paddle is not initialized!");
+        }
+
         if (ball.estaQuieto()) {
-            ball.setXY(pad.getX() + pad.getWidth() / 2 - GameConfig.getBallSize() / 2, pad.getY() + pad.getHeight() + GameConfig.getBallSize());
+            GameConfig config = GameConfig.getInstance();
+            ball.setXY(pad.getX() + pad.getWidth() / 2 - config.getBallSize() / 2, pad.getY() + pad.getHeight() + config.getBallSize());
         } else {
             ball.update();
         }
 
-        // Procesar todas las colisiones
+        if (collisionManager == null) {
+            throw new NullPointerException("CollisionManager is not initialized!");
+        }
         collisionManager.checkCollisions();
 
-        // Verificar si el juego ha terminado o si se completó el nivel
-        if (scoreManager.isGameOver()) {
+        if (ScoreManager.getInstance().isGameOver()) {
             resetGame();
         } else if (gameLevel.isLevelCompleted()) {
             advanceToNextLevel();
         }
 
-        // Renderizar todos los objetos y la interfaz
         renderManager.render(drawables);
         uiManager.drawHUD();
         uiManager.drawInstructions();
     }
 
+
     private void resetGame() {
-        scoreManager.reset();
+        ScoreManager.getInstance().reset();
         gameLevel.resetLevel();
         ball.resetPosition(pad);
         drawables.clear();
         drawables.add(pad);
         drawables.add(ball);
-        drawables.addAll(gameLevel.getBlocks()); // Añadir bloques después de reiniciar el nivel
+        drawables.addAll(gameLevel.getBlocks());
     }
 
     private void advanceToNextLevel() {
@@ -101,9 +110,9 @@ public class BlockBreakerGame extends ApplicationAdapter {
         drawables.clear();
         drawables.add(pad);
         drawables.add(ball);
-        drawables.addAll(gameLevel.getBlocks()); // Añadir nuevos bloques al avanzar de nivel
+        drawables.addAll(gameLevel.getBlocks());
     }
-    
+
     @Override
     public void dispose() {
         batch.dispose();
