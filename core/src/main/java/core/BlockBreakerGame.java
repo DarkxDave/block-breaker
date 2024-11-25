@@ -15,7 +15,8 @@ import manager.InputHandler;
 import manager.UIManager;
 import level.GameLevel;
 import entity.Drawable;
-
+import strategy.AcceleratedMovementStrategy;
+import strategy.NormalMovementStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +46,6 @@ public class BlockBreakerGame extends ApplicationAdapter {
         pad = new Paddle(config.getScreenWidth() / 2 - config.getPaddleWidth() / 2, 40, config.getPaddleWidth(), config.getPaddleHeight());
      // Crear el nivel utilizando el Builder
         gameLevel = new GameLevel.Builder()
-            .setLevelNumber(1)
-            .addRowOfBlocks(700, 70, 26, GameConfig.getInstance().getScreenWidth(), 10) // Fila 1
-            .addRowOfBlocks(660, 70, 26, GameConfig.getInstance().getScreenWidth(), 10) // Fila 2
-            .addRowOfBlocks(620, 70, 26, GameConfig.getInstance().getScreenWidth(), 10) // Fila 3
             .build();
 
         // Verificar inicialización de gameLevel
@@ -94,6 +91,12 @@ public class BlockBreakerGame extends ApplicationAdapter {
             advanceToNextLevel();
         }
 
+      /*if (scoreManager.getPuntaje() > 10) {
+            ball.setMovementStrategy(new AcceleratedMovementStrategy());
+        } else {
+            ball.setMovementStrategy(new NormalMovementStrategy());
+        }
+      */
         renderManager.render(drawables);
         uiManager.drawHUD();
         uiManager.drawInstructions();

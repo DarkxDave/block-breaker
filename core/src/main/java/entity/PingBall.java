@@ -3,12 +3,15 @@ package entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import config.GameConfig;
+import strategy.AcceleratedMovementStrategy;
+import strategy.BallMovementStrategy;
 
 public class PingBall extends GameObject implements Drawable {
     private int xSpeed;
     private int ySpeed;
     private Color color;
     private boolean estaQuieto;
+	private BallMovementStrategy movementStrategy;
 
     public PingBall(int x, int y, int size, int xSpeed, int ySpeed, boolean iniciaQuieto) {
         super(x, y, size, size);
@@ -25,6 +28,7 @@ public class PingBall extends GameObject implements Drawable {
     }
 
     public void update() {
+    	movementStrategy.updateBallSpeed(this);
         if (estaQuieto) return;
         x += xSpeed;
         y += ySpeed;
@@ -60,7 +64,11 @@ public class PingBall extends GameObject implements Drawable {
         y = paddle.getY() + paddle.getHeight() + height;
         estaQuieto = true;
     }
-
+    
+    public void setMovementStrategy(BallMovementStrategy movementStrategy) {
+        this.movementStrategy = movementStrategy;
+    }
+    
     public void setXY(int x, int y) {
         this.x = x;
         this.y = y;
@@ -91,5 +99,25 @@ public class PingBall extends GameObject implements Drawable {
             ySpeed -= increment;
         }
     }
+
+	public float getYSpeed() {
+		// TODO Auto- method stub
+		return 0;
+	}
+
+	public void setYSpeed(float ySpeed2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setXSpeed(float ySpeed2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setMovementStrategy(AcceleratedMovementStrategy acceleratedMovementStrategy) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
